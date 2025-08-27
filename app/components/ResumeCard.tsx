@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import {useEffect, useState} from "react";
 import ScoreCircle from './ScoreCircle';
+import { usePuterStore } from '~/lib/puter';
 
 const ResumeCard = ({
   resume: { id, companyName, jobTitle, feedback, imagePath },
@@ -8,6 +9,18 @@ const ResumeCard = ({
   resume: Resume;
 }) => {
   const [resumeUrl, setResumeUrl] = useState('');
+  const { fs } = usePuterStore();
+
+    useEffect(() => {
+        const loadResume = async () => {
+            const blob = await fs.read(imagePath);
+            if(!blob) return;
+            let url = URL.createObjectURL(blob);
+            setResumeUrl(url);
+        }
+
+        loadResume();
+    }, [imagePath]);
   return (
     <Link to={`/resume/${id}`} className="resume-card animate-in fade-in duration-1000">
             <div className="resume-card-header">
